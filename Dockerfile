@@ -30,6 +30,5 @@ COPY --from=build /app/next.config.ts ./next.config.ts
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 
-EXPOSE 3000
 CMD ["pnpm", "start"]
 

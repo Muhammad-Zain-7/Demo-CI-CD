@@ -19,5 +19,7 @@ jobs:
 
       - name: Deploy Docker Container
         run: |
+          docker stop my-next-app-container || true
+          docker rm my-next-app-container || true
 
           docker run -d -p 3000:3000 --name my-next-app-container my-next-app

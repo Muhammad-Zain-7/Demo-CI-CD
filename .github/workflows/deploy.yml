@@ -1,4 +1,4 @@
-name: Deploy Next.js App (Self-Hosted)
+name:  App with PM2
 
 on:
   push:
@@ -7,19 +7,29 @@ on:
 
 jobs:
   deploy:
+
     runs-on: self-hosted
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker Image
-        run: |
-          docker build -t my-next-app .
+      - name: Setup Node.js
 
-      - name: Deploy Docker Container
-        run: |
-          docker stop my-next-app-container || true
-          docker rm my-next-app-container || true
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-          docker run -d -p 3000:3000 --name my-next-app-container my-next-app
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Next.js App
+        run: pnpm run build
+
+      - name: Start or Reload App with PM2
+
+        run: |
+          pm2 start "pnpm start" --name "my-next-app" || pm2 reload "my-next-app"

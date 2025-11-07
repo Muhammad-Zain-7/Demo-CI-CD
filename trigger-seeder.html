@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>NFT Seeder</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #1a1a2e;
+        color: white;
+      }
+      button {
+        padding: 10px 20px;
+        background: #6a2c93;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #8e44ad;
+      }
+      #result {
+        margin-top: 20px;
+        padding: 10px;
+        background: #16213e;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>NFT Marketplace Seeder</h1>
+    <p>
+      Click the button below to seed the database with NFT collections and NFTs:
+    </p>
+    <button onclick="runSeeder()">Run Seeder</button>
+    <div id="result"></div>
+
+    <script>
+      async function runSeeder() {
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "Running seeder...";
+
+        try {
+          const response = await fetch("http://localhost:3001/api/seed-nfts", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            resultDiv.innerHTML = `
+                        <h3>✅ Seeding Successful!</h3>
+                        <p><strong>Message:</strong> ${data.message}</p>
+                        <p><strong>Collections Created:</strong> ${data.data.collections}</p>
+                        <p><strong>NFTs Created:</strong> ${data.data.nfts}</p>
+                        <p><strong>Duration:</strong> ${data.data.duration}ms</p>
+                    `;
+          } else {
+            resultDiv.innerHTML = `<h3>❌ Seeding Failed</h3><p>${
+              data.message || "Unknown error"
+            }</p>`;
+          }
+        } catch (error) {
+          resultDiv.innerHTML = `<h3>❌ Error</h3><p>${error.message}</p>`;
+        }
+      }
+    </script>
+  </body>
+</html>

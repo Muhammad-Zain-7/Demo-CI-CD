@@ -1,0 +1,28 @@
+name: Deploy Next.js App (Self-Hosted)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          # We'll tag this new app 'my-next-app'
+          docker build -t my-next-app .
+
+      - name: Deploy Docker Container
+        run: |
+          docker stop my-next-app-container || true
+          
+          docker rm my-next-app-container || true
+          
+          # We map the host's port 80 to the container's port 3000
+          docker run -d -p 80:3000 --name my-next-app-container my-next-app
